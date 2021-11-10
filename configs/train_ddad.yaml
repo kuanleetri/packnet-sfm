@@ -27,7 +27,8 @@ datasets:
         batch_size: 2
         num_workers: 8
         dataset: ['DGP']
-        path: ['/data/datasets/DDAD/ddad.json']
+        path: ['/mnt/fsx/snapshots/datasets/ddad/ddad.json']
+        # path: ['/mnt/fsx/snapshots/overfit_datasets/ioda_scenes/ioda_scenes_overfit_v2/ioda_scenes_overfit_v2.json']
         split: ['train']
         depth_type: ['lidar']
         cameras: [['camera_01']]
@@ -35,14 +36,19 @@ datasets:
     validation:
         num_workers: 8
         dataset: ['DGP']
-        path: ['/data/datasets/DDAD/ddad.json']
+        path: ['/mnt/fsx/snapshots/datasets/ddad/ddad.json']
+        # path: ['/mnt/fsx/snapshots/overfit_datasets/ioda_scenes/ioda_scenes_overfit_v2/ioda_scenes_overfit_v2.json']
         split: ['val']
         depth_type: ['lidar']
         cameras: [['camera_01']]
     test:
         num_workers: 8
         dataset: ['DGP']
-        path: ['/data/datasets/DDAD/ddad.json']
+        path: ['/mnt/fsx/snapshots/datasets/ddad/ddad.json']
+        # path: ['/mnt/fsx/snapshots/overfit_datasets/ioda_scenes/ioda_scenes_overfit_v2/ioda_scenes_overfit_v2.json']
         split: ['val']
         depth_type: ['lidar']
         cameras: [['camera_01']]
+wandb:
+        dry_run: False
+        project: 'packnet_test'

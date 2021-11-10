@@ -6,7 +6,7 @@ import numpy as np
 
 from dgp.datasets.synchronized_dataset import SynchronizedSceneDataset
 from dgp.utils.camera import Camera, generate_depth_map
-from dgp.utils.geometry import Pose
+from dgp.utils.pose import Pose
 
 from packnet_sfm.utils.misc import make_list
 from packnet_sfm.utils.types import is_tensor, is_numpy, is_list
@@ -109,6 +109,8 @@ class DGPDataset:
         self.input_depth_type = input_depth_type
         self.with_input_depth = input_depth_type is not None and input_depth_type is not ''
 
+        if self.with_depth:
+            cameras += ['lidar']
         self.dataset = SynchronizedSceneDataset(path,
             split=split,
             datum_names=cameras,
@@ -146,11 +148,8 @@ class DGPDataset:
         # Otherwise, create, save and return
         else:
             # Get pointcloud
-            scene_idx, sample_idx_in_scene, _ = self.dataset.dataset_item_index[sample_idx]
-            pc_datum_idx_in_sample = self.dataset.get_datum_index_for_datum_name(
-                scene_idx, sample_idx_in_scene, self.depth_type)
-            pc_datum_data = self.dataset.get_point_cloud_from_datum(
-                scene_idx, sample_idx_in_scene, pc_datum_idx_in_sample)
+            scene_idx, sample_idx_in_scene, datum_names = self.dataset.dataset_item_index[sample_idx]
+            pc_datum_data, _ = self.dataset.get_point_cloud_from_datum(scene_idx, sample_idx_in_scene, 'lidar')
             # Create camera
             camera_rgb = self.get_current('rgb', datum_idx)
             camera_pose = self.get_current('pose', datum_idx)
@@ -202,7 +201,7 @@ class DGPDataset:
             Filename for the datum in that sample
         """
         scene_idx, sample_idx_in_scene, datum_indices = self.dataset.dataset_item_index[sample_idx]
-        scene_dir = self.dataset.get_scene_directory(scene_idx)
+        scene_dir = self.dataset.dataset_metadata.directory # self.dataset.get_scene_directory(scene_idx)
         filename = self.dataset.get_datum(
             scene_idx, sample_idx_in_scene, datum_indices[datum_idx]).datum.image.filename
         return os.path.splitext(os.path.join(os.path.basename(scene_dir),
